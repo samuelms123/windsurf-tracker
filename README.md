@@ -3,7 +3,7 @@
 Windsurf-tracker is at the moment for my personal use only.
 
 Please check out the project repositories here:
-* **Frontend** [Windsurf-Tracker Frontend](https://github.com/samuelms123/windsurf-tracker-frontend)
+* **Frontend**: [Windsurf-Tracker Frontend](https://github.com/samuelms123/windsurf-tracker-frontend)
 * **Backend API:** [Windsurf-Tracker Backend](https://github.com/samuelms123/windsurf-tracker-backend)
 
 ## Developement Story
