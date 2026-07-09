@@ -2,9 +2,13 @@
 
 Windsurf-tracker is at the moment for my personal use only.
 
+Please check out the project repositories here:
+* **Frontend** [Windsurf-Tracker Frontend](https://github.com/samuelms123/windsurf-tracker-frontend)
+* **Backend API:** [Windsurf-Tracker Backend](https://github.com/samuelms123/windsurf-tracker-backend)
+
 ## Developement Story
 
-First when I started to plan this project, the idea was to create mobile application for the frontend with React Native and host the backend on MongoDB. I almost finished the backend with multi-user support, but then I took a break and didn't continue the project for a year or so.
+First when I started to plan this project, the idea was to create a mobile application for the frontend with React Native and host the backend on MongoDB. I almost finished the backend with multi-user support, but then I took a break and didn't continue the project for a year or so.
 
 After some time I thought it was time to get back on the Windsurf-Tracker project and started to review the project and what had I already done earlier. I had implemented Oauth via Strava, successfully fetched windsurf activities and streams from Strava API, implemented JWT-auth for MongoDB and of course analytics for the data. Backend was 80% done, but I decided to narrow the scope down and simplify the structure for personal use only. This decision was great and made simply because I really aimed to finish the project this time. 
 So, I left the multi-user idea to marinade in its own 'multi-user' -branch and created new branch 'single-user'.
