@@ -11,7 +11,7 @@ Please, check out the project repositories here:
 First when I started to plan this project, the idea was to create a mobile application for the frontend with React Native and use MongoDB Atlas database for storing users and their analyzed windsurf data. For the backend, I decided to use FastAPI Python framework, since it was natural to use Python backend because of Pandas.
 
 I personally use Suunto watch to track my sessions, so I pivoted towards using Suunto API service. After some research, I found out that Suunto does not grant API access for personal use or solo hobby projects.
-I did not give up straight away. I made some plans and graphs for the application and applied to the Suunto Developer Program with an explanation of why I, as a motivated student, need to get access to the Suunto API Zone.
+I did not give up straight away. I made some plans and graphs for the application and applied to the [Suunto Partner Program](https://www.suunto.com/welcomepartners) with an explanation of why I, as a motivated student, need to get access to the Suunto API Zone.
 After a week or so, they got back to me and indeed gave me access to their API Zone. Kudos to Suunto (Hire me).
 
 After some playing around with the API, I came to think "What if someone doesn't own a Suunto watch". That's where Strava came in as a centralized platform for every brand out there. The Strava API was relatively straightforward to set up and free to use—though that has changed recently in 2026. Still it is very affordable, like 2e/month for students with decent rate limits.
