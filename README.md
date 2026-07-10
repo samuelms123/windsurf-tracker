@@ -1,34 +1,43 @@
 # Windsurf-Tracker
 
-Windsurf-tracker is at the moment for my personal use only.
+Windsurf-Tracker in a Progressive Web Application made to track and analyze windsurf sessions from [Strava](https://www.strava.com/). Currently, the application is for my personal use only.
 
-Please check out the project repositories here:
+Please, check out the project repositories here:
 * **Frontend:** [Windsurf-Tracker Frontend](https://github.com/samuelms123/windsurf-tracker-frontend)
 * **Backend API:** [Windsurf-Tracker Backend](https://github.com/samuelms123/windsurf-tracker-backend)
 
 ## Developement Story
 
-First when I started to plan this project, the idea was to create a mobile application for the frontend with React Native and host the backend on MongoDB. I almost finished the backend with multi-user support, but then I took a break and didn't continue the project for a year or so.
+First when I started to plan this project, the idea was to create a mobile application for the frontend with React Native and use MongoDB Atlas database for storing users and their analyzed windsurf data. For the backend, I decided to use FastAPI Python framework, since it was natural to use Python backend because of Pandas.
 
-After some time I thought it was time to get back on the Windsurf-Tracker project and started to review the project and what had I already done earlier. I had implemented Oauth via Strava, successfully fetched windsurf activities and streams from Strava API, implemented JWT-auth for MongoDB and of course analytics for the data. Backend was 80% done, but I decided to narrow the scope down and simplify the structure for personal use only. This decision was great and made simply because I really aimed to finish the project this time. 
+I personally use Suunto watch to track my sessions, so I pivoted towards using Suunto API service. After some research, I found out that Suunto does not grant API access for personal use or solo hobby projects.
+I did not give up straight away. I made some plans and graphs for the application and applied to the Suunto Developer Program with an explanation of why I, as a motivated student, need to get access to the Suunto API Zone.
+After a week or so, they got back to me and indeed gave me access to their API Zone. Kudos to Suunto (Hire me).
+
+After some playing around with the API, I came to think "What if someone doesn't own a Suunto watch". That's where Strava came in as a centralized platform for every brand out there. The Strava API was relatively straightforward to set up and free to use—though that has changed recently in 2026. Still it is very affordable, like 2e/month for students with decent rate limits.
+
+I had almost finished the backend with multi-user support, but then I took a break and didn't continue the project for a year or so.
+
+After some time I thought it was time to get back on the Windsurf-Tracker project and started to review the project. I had implemented Oauth via Strava, successfully fetched windsurf activities and streams from Strava API, implemented JWT-auth for MongoDB and of course analytics for the data. Backend was 80% done, but I decided to narrow the scope down and simplify the structure for personal use only.
+This decision was great and made simply because I really aimed to finish the project this time. 
 So, I left the multi-user idea to marinade in its own 'multi-user' -branch and created new branch 'single-user'.
 
-Like mentioned earlier, the backend was nearly done and I stripped out unnecessary complexities like JWT authentication, cryptography for long-lived Strava refresh tokens, and user database storage. This was not necessary anymore since I could just store my own tokens in the .env-file. 
+Like mentioned earlier, the backend was nearly done and I stripped out unnecessary complexities like JWT authentication, cryptography for long-lived Strava refresh tokens, and user database storage. This was not necessary anymore since I could just store my own tokens in the .env-file in the backend. 
 
-During the break, I got interested in networking and cybersecurity and started to build my own home-lab and the idea was to host the backend and database on my own Proxmox-server. During the developement I already deployed the MongoDB-server to my Proxmox host in its own isolated VM. After I had finished the backend I also deployed the FastAPI backend to Debian-based lightweight LX-Container (LXC) on Proxmox.
+During the break, I got interested in networking and cybersecurity and started to build my own home lab and the idea was to host the backend and database on my own Proxmox-server. During the developement I already deployed the MongoDB-server to my Proxmox host in its own isolated VM. After I had finished the backend I also deployed the FastAPI backend to Debian-based lightweight LX-Container (LXC) on Proxmox.
 
 To access the backend from my phone, since it was for my use only, the plan was to use VPN. I deployed another LXC to my Proxmox and installed PiVPN on it running WireGuard. I forwarded default Wireguard port 51820 UDP from my router to the Wireguard LXC. It was working nicely and now I had a secure way to access my backend from remote places.
 
-It was time to start working on the front end of the application. My initial idea was to use React Native and Expo, but after some digging, I realized getting the application onto my iPhone would be a major hurdle. Since I am an Iphone user, I would have needed to subscribe to Apple Developer -program (99$/y or something) and I really did not want to pay it. In addition, I do not own a Macbook, so the whole iOS build process looked like a massive headache. So I decided to built the application as a Progressive Web Application (PWA).
+It was time to start working on the frontend of the application. My initial idea was to use React Native and Expo, but after some digging, I realized getting the application onto my iPhone would be a major hurdle. I would have needed to subscribe to Apple Developer -program (99$/y or something) and I really did not want to pay it. In addition, I do not own a Macbook, so the whole iOS build process looked like a massive headache. So I decided to built the application as a Progressive Web Application (PWA).
 
-I finished first version of the front end and it was time to deploy it for the first time. I decided to deploy it to Vercel. I could have also hosted the front end on my home lab, but I wanted to try Vercel. In addition, atleast you can now check the /blocked page when entering the site on [Windsurf-Tracker](https://windsurf-tracker-frontend.vercel.app)!
+I finished first version of the frontend and it was time to deploy it for the first time. I decided to deploy it to Vercel. I could have also hosted the frontend on my home lab, but I wanted to try Vercel. In addition, atleast now you can check the /blocked page when entering the site on [Windsurf-Tracker](https://windsurf-tracker-frontend.vercel.app)!
 
 Immediately I ran into some issues when trying to access the application on my phone as PWA. Since Vercel strictly enforces HTTPS, my backend required a valid SSL certificate to avoid mixed-content security blocks. First off I tried to solve this by adding 'home made' SSL certificate on my backends Uvicorn-server. Well, it did not work out, atleast when running it as PWA. While I could bypass the security warning in a mobile browser by manually marking the self-signed certificate as safe, iOS enforces incredibly strict security policies for Progressive Web Apps. When launched from the home screen, iOS immediately dropped the insecure connection to my backend without giving me any option to bypass it. Next, I had to find a solution for this.
 
 First solution was to use [Tailscale](https://tailscale.com/). Tailscale is a mesh VPN which utilizes Wireguard for tunneling. I chose Tailscale because it features a built-in reverse proxy that automatically provisions and manages valid Let's Encrypt SSL certificates out of the box. I installed Tailscale on my backend LXC and reconfigured backend server to listen on localhost only, since Tailscale was in the same container. 
 After Tailscale was up and running, I updated my Vercel environment variables, replacing the local IP with the unique Tailnet URL generated by Tailscale. After connecting my phone to the Tailnet using the mobile client, the setup worked perfectly—iOS accepted the valid certificate and no longer dropped the connection.
 
-That night, I couldn't stop thinking about the architecture. As a firm believer in the 'Zero-Trust' philosophy, it bothered me that my private data pipeline was ultimately reliant on a third-party vendor. Even though Tailscales business model doesn't rely on collecting data in any way and I'm pretty sure that their architecture wont even let them, even if they wanted to. Still, I wanted another solution.
+That night, I couldn't stop thinking about the architecture. As a firm believer in the Zero-Trust philosophy, it bothered me that my private data pipeline was ultimately reliant on a third-party vendor. Even though Tailscale's business model doesn't rely on data collection in any way—and their actual architecture likely prevents them from doing so anyway—I still wanted a solution completely under my own control.
 
 The next day, I bought my own domain name from Cloudflare specifically to manage my backend routing and secure a valid Let's Encrypt SSL certificate on my own terms. I configured a subdomain for my backend and set it to 'DNS-only' (grey-clouded) on Cloudflare. This essentially treats Cloudflare as a simple phone book—they resolve the domain to my private IP address, but they don't proxy, decrypt, or intercept any of the traffic. 
 Next, I set up yet another LXC container running Nginx Proxy Manager to handle the SSL certificates and proxy incoming requests to my FastAPI backend container. I ran down the Tailscale service on my backend LXC and reconfigured the server to listen on the `0.0.0.0:8000` so that NPM could reach it from another container. 
