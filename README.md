@@ -47,8 +47,8 @@ Now Im happy with the architecture and looking forward on making improvements to
 
 ## Current Architecture
 - **Frontend:** Hosted on Vercel. [Windsurf-Tracker](https://windsurf-tracker-frontend.vercel.app)
-- **DNS & Domain:** Cloudflare (Grey-Clouded / DNS-only for absolute privacy).
+- **DNS & Domain:** Cloudflare (Grey-Clouded / DNS-only).
 - **Ingress & Security:** PiVPN LXC hosted on Proxmox running Wireguard acting as the exclusive cryptographic gateway.
 - **Reverse Proxy & SSL:** Nginx Proxy Manager (LXC) hosted on Proxmox handling local SSL termination and proxying.
-- **Backend:** FastAPI (LXC) hosted on Proxmox listening locally on `0.0.0.0:8000`.
+- **Backend:** FastAPI (LXC) hosted on Proxmox listening locally on port`8000`.
 - **Database:** MongoDB running in an isolated Proxmox VM.
