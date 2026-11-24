@@ -26,7 +26,7 @@ Like mentioned earlier, the backend was nearly done and I stripped out unnecessa
 
 During the break, I got interested in networking and cybersecurity and started to build my own home lab and the idea was to host the backend and database on my own Proxmox-server. During the developement I already deployed the MongoDB-server to my Proxmox host in its own isolated VM. After I had finished the backend I also deployed the FastAPI backend to Debian-based lightweight LX-Container (LXC) on Proxmox.
 
-To access the backend from my phone, since it was for my use only, the plan was to use VPN. I deployed another LXC to my Proxmox and installed PiVPN on it running WireGuard. I forwarded default Wireguard port 51820 UDP from my router to the Wireguard LXC. It was working nicely and now I had a secure way to access my backend from remote places.
+To access the backend from my phone, since it was for my use only, the plan was to use VPN. I deployed another LXC to my Proxmox and installed PiVPN on it running WireGuard. I forwarded default Wireguard port 51820 UDP from my router to the Wireguard LXC. It was working nicely and now I had a secure way to access my backend from remote places. Edit. Later added OPNsense firewall/router and managed WireGuard directly on it as a separate interface.
 
 It was time to start working on the frontend of the application. My initial idea was to use React Native and Expo, but after some digging, I realized getting the application onto my iPhone would be a major hurdle. I would have needed to subscribe to Apple Developer -program (99$/y or something) and I really did not want to pay it. In addition, I do not own a Macbook, so the whole iOS build process looked like a massive headache. So I decided to built the application as a Progressive Web Application (PWA).
 
@@ -39,16 +39,16 @@ After Tailscale was up and running, I updated my Vercel environment variables, r
 
 That night, I couldn't stop thinking about the architecture. As a firm believer in the Zero-Trust philosophy, it bothered me that my private data pipeline was ultimately reliant on a third-party vendor. Even though Tailscale's business model doesn't rely on data collection in any way—and their actual architecture likely prevents them from doing so anyway—I still wanted a solution completely under my own control.
 
-The next day, I bought my own domain name from Cloudflare specifically to manage my backend routing and secure a valid Let's Encrypt SSL certificate on my own terms. I configured a subdomain for my backend and set it to 'DNS-only' (grey-clouded) on Cloudflare. This essentially treats Cloudflare as a simple phone book—they resolve the domain to my private IP address, but they don't proxy, decrypt, or intercept any of the traffic. 
-Next, I set up yet another LXC container running Nginx Proxy Manager to handle the SSL certificates and proxy incoming requests to my FastAPI backend container. I ran down the Tailscale service on my backend LXC and reconfigured the server to listen on the `0.0.0.0:8000` so that NPM could reach it from another container. 
-Lastly, I updated the Vercel project to point to my new subdomain, which resolves straight to the private IP of the NPM on my network. This makes it so that it is only reachable through my Wireguard server.
+The next day, I bought my own domain name from Cloudflare specifically to get a valid Let's Encrypt SSL certificate. I configured a subdomain for Nginx Proxy Manager on OPNsense. 
+Next, I set up yet another LXC container running Nginx Proxy Manager to handle the SSL certificates and proxy incoming requests to my FastAPI backend container. I ran down the Tailscale service on my backend LXC and reconfigured the server to listen locally on port `8000` so that NPM could reach it from another container. 
+Lastly, I updated the Vercel project to point to my new subdomain, which resolves straight to the private IP of the NPM on my network. This makes it so that it is only reachable through my Wireguard server on OPNsense.
 
 Now Im happy with the architecture and looking forward on making improvements to the app itself.
 
 ## Current Architecture
 - **Frontend:** Hosted on Vercel. [Windsurf-Tracker](https://windsurf-tracker-frontend.vercel.app)
-- **DNS & Domain:** Cloudflare (Grey-Clouded / DNS-only).
-- **Ingress & Security:** PiVPN LXC hosted on Proxmox running Wireguard acting as the exclusive cryptographic gateway.
+- **DNS & Domain:** OPNsense.
+- **Ingress & Security:** OPNsense Wireguard tunnel.
 - **Reverse Proxy & SSL:** Nginx Proxy Manager (LXC) hosted on Proxmox handling local SSL termination and proxying.
 - **Backend:** FastAPI (LXC) hosted on Proxmox listening locally on port`8000`.
 - **Database:** MongoDB running in an isolated Proxmox VM.
